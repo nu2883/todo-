@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Required Icon -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+    <title>todo++</title>
+
+    <style>
+    .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+    }
+    .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container" id="app">
+
+    <nav class="navbar navbar-expand-lg  fixed-top navbar-dark bg-primary">
+            <div class="container-fluid container">
+                    <a class="navbar-brand" href="#">TODO++</a>
+                    <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                          <ul class="navbar-nav">
+                            <li class="nav-item">
+                              <a class="nav-link active" aria-current="page" href="#">Home</a>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link" href="#">Features</a>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link" href="#">Pricing</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Dropdown link
+                              </a>
+                              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </div> -->
+                    <form class="d-flex">
+                    <input v-model="cari" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <!-- <button class="btn btn-outline-primary" type="submit">Search</button> -->
+                    </form>
+                </div>
+    </nav>
+
+    <nav class="navbar navbar-expand-lg  navbar-dark bg-primary">
+            <div class="container-fluid container">
+                    <a class="navbar-brand" href="#">TODO++</a>
+                    <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                          <ul class="navbar-nav">
+                            <li class="nav-item">
+                              <a class="nav-link active" aria-current="page" href="#">Home</a>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link" href="#">Features</a>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link" href="#">Pricing</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Dropdown link
+                              </a>
+                              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </div> -->
+                    <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <!-- <button class="btn btn-outline-primary" type="submit">Search</button> -->
+                    </form>
+                </div>
+    </nav>
+
+<div v-if="tasksView">
+<transition name="fade">
+    <div v-if="!form_input" class="container ">
+            
+        <ul v-if="!semua">
+            <li  class="display-1" v-for="task in HasilCari" @click="kliktampildetail(task)">{{task.kegiatan}}  <br> <span v-if="task.deadline" class="text-danger display-5"> ( {{task.deadline}} )</span></li>
+
+        </ul>
+
+        <ul v-if="semua">
+                <li   v-for="task in tasks" @click="kliktampildetail(task)" :class="warna(task.status)">{{task.kegiatan}} <br> <span v-if="task.deadline" class="text-danger  display-5"> ( {{task.deadline}} )</span></li>
+    
+        </ul>
+        <!-- {{tasks}} -->
+    </div>
+</transition>
+
+
+
+    <div v-if="form_input" class="container mb-5">
+        <br><br>
+        <div class="input-group mb-2">
+                <span class="input-group-text" id="basic-addon1">Kegiatan</span>
+                <input v-model="kegiatan" type="text" autofocus class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+                </div>
+
+                <div class="input-group mb-2">
+                    <span class="input-group-text" id="basic-addon1">Deadline</span>
+                    <input v-model="deadline" type="date" class="form-control"  aria-label="Username" aria-describedby="basic-addon1">
+                </div>                
+                
+                <div class="input-group">
+                    <span class="input-group-text">Uraian Detail</span>
+                    <textarea v-model="detail" class="form-control" aria-label="With textarea"></textarea>
+                </div>
+                <div class="text-center mt-2">
+                    <button @click="simpanTask" type="button" class="btn btn-primary">Primary</button>
+                </div>
+        <br><br><br><br><br><br>
+    </div>
+
+</div>
+
+<div  v-if="detailView">
+    <br>
+    <transition name="fade">
+        <div  v-if="task" >
+            <div class="card">
+                <div class="card-header">
+                    <h1>{{task.kegiatan}}</h1>
+                </div>
+                <div class="card-body">
+                    <h5 v-if="task.deadline" class="card-title text-danger">Deadline : {{task.deadline}}</h5>
+                    <h5><p class="card-text ">{{task.detail}}</p></h5>
+                    <button @click="TaskSelesai(task)" class="btn btn-primary">Task Selesai</button>
+                    <button @click="detailView = false; tasksView = true;" class="btn btn-danger">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </transition>
+</div>
+
+
+    <nav class="navbar fixed-bottom navbar-light bg-light">
+        <div class="container-fluid container">
+
+            <a @click="tampilkanSemua" class="navbar-brand" href="#"><i class="bi bi-grid-fill text-danger display-5"></i></a>
+
+            <a @click="home" class="navbar-brand" href="#"><i class="bi bi-house-fill text-primary display-5"></i></a>
+
+            <a @click="form_input=!form_input" class="navbar-brand" href="#"><i class="bi bi-plus-circle-fill text-success display-5"></i></a>
+
+    </nav>
+
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+    -->
+
+    <!-- ajax -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+    var app = new Vue({
+    el: '#app',
+    data() {
+        return{
+            message: 'Hello Vue!',
+            form_input : false,
+            tasks : ['Daftar Tukin', 'LS Capacity Building', 'Kuitansi Pos dan SPBU', 'Persiapn GU', 'Bayar Pajak'],
+            kegiatan:'',
+            deadline:'',
+            detail:'',
+            task:null,
+            tasksView:true,
+            detailView:false,
+            cari:'',
+            semua:false,
+
+        }
+    },
+
+    computed: {
+        TaskAktif: function(){
+            return this.tasks.filter(product => product.status != 2)
+        },
+        HasilCari: function(){
+            return this.TaskAktif.filter((blog) => {
+                return blog.kegiatan.match(this.cari);
+            }) ||  this.TaskAktif.filter((blog) => {
+                return blog.detail.match(this.cari);
+            });
+
+            
+        }
+    },
+    methods:{
+        home(){
+            this.detailView = false
+            this.tasksView = true
+            this.form_input=false
+        },
+        kliktampildetail(task){
+            this.task = task
+            this.tasksView = false
+            this.detailView = true
+        },
+        simpanTask(){
+            if(this.kegiatan)
+            {
+            this.loading = true;
+                var waktu1 = Date.now();
+                var ikegiatan = this.kegiatan.toString();
+                var ideadline = this.deadline.toString();
+                var idetail = this.detail.toString();
+                var istatus = 1;
+                var lin = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=insert&table=data&data={"id":${waktu1}, "kegiatan":"'${ikegiatan}","deadline":"'${ideadline}","detail":"'${idetail}","status":"${istatus} "}`;
+                // this.test = lin;
+                
+                $.ajax({
+                type: 'GET',
+                url: lin,
+                crossDomain: true,
+                dataType: 'jsonp',
+                dataType: "text",
+                success: function(resultData) { 
+                //   alert("Save Complete");
+                app.kegiatan = ''
+                app.deadline = ''
+                app.detail = ''
+
+                app.GetDataTasks();
+                }
+                });
+        
+                alert('Task Berhasil di Simpan')
+
+            }
+            else{
+                alert('Masih terdapat data yang belum di input')
+            }
+        
+    
+        },
+
+        TaskSelesai(aa){
+                // alert('update')
+                // var waktu1 = Date.now();
+                var itimestamp = aa.id;
+                var url = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=update&table=data&id=${itimestamp}&data={"status":"2"}`
+                // this.test = url;
+                // timestamp=${itimestamp}
+                $.ajax({
+                type: 'GET',
+                url: url,
+                crossDomain: true,
+                dataType: 'jsonp',
+                dataType: "text",
+                success: function(resultData) { 
+                    alert('Task Update Selesai')
+                    app.GetDataTasks();
+                    app.home();
+                }
+                });
+
+      },
+
+              hapusTask(aa){
+                // alert('update')
+                // var waktu1 = Date.now();
+                var itimestamp = aa.id;
+                console.log(itimestamp)
+                var url = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=delete&table=data&id=${itimestamp}`
+                // this.test = url;
+                // timestamp=${itimestamp}
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    crossDomain: true,
+                    dataType: 'jsonp',
+                    dataType: "text",
+                        success: function(resultData) { 
+                            alert('Task Update Selesai')
+                            app.GetDataTasks();
+                            app.home();
+                        }
+                });
+
+      },
+
+        GetDataTasks(){
+        this.tasks = [];
+
+        // var url ="https://script.google.com/macros/s/AKfycbyc7wzSrUGxQhcBN5EfVC-rNRj3wncZJOVTWAChXtSwnrHkGjoaoI91bggme_fUOIP9/exec?action=read&table=query";
+        var url ="https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=read&table=data";
+        
+
+        $.getJSON(url, function (json) {
+        // console.log(json.data);
+        app.tasks = json.data;
+        });
+      },
+
+      tampilkanSemua(){
+          this.semua =!this.semua
+      },
+      warna(x){
+          if(x == 2){
+              return 'display-1 text-warning'
+          }else{
+              return 'display-1 '
+          }
+      }
+
+    },
+
+    created(){
+        this.GetDataTasks();
+
+
+
+    }
+
+
+
+
+
+    })
+    
+    
+    
+    
+    </script>
+  </body>
+</html>
