@@ -98,18 +98,32 @@
                     </form>
                 </div>
     </nav>
-
+<!-- {{TaskAktif}} -->
 <div v-if="tasksView">
 <transition name="fade">
     <div v-if="!form_input" class="container ">
             
         <ul v-if="!semua">
-            <li  class="display-1" v-for="task in HasilCari" @click="kliktampildetail(task)">{{task.kegiatan}}  <br> <span v-if="task.deadline" class="text-danger display-5"> ( {{task.deadline}} )</span></li>
+          <li  class="display-5" v-for="task in HasilCari" >
+            
+            
+            <div>
+              <span @click="kliktampildetail(task)">{{task.kegiatan}}  <br> <span v-if="task.deadline" class="text-danger "> ( {{task.deadline}} )</span> </span>
+              <a  class="navbar-brand" href="#"><i class="bi bi-arrow-up-circle-fill text-primary display-5"></i></a>  
+              <a  class="navbar-brand" href="#"><i class="bi bi-arrow-down-circle-fill text-primary display-5"></i></a>
+            </div>
+              
+          </li>
 
         </ul>
 
         <ul v-if="semua">
-                <li   v-for="task in tasks" @click="kliktampildetail(task)" :class="warna(task.status)">{{task.kegiatan}} <br> <span v-if="task.deadline" class="text-danger  display-5"> ( {{task.deadline}} )</span></li>
+                <li v-for="task in tasks"  :class="warna(task.status)">
+                  <span @click="kliktampildetail(task)">
+                        {{task.kegiatan}} <br> <span v-if="task.deadline" class="text-danger  display-5"> ( {{task.deadline}} )</span>
+                  </span>
+                  <button v-if="task.status == 2" @click="hapusTask(task)" class="btn btn-danger">Hapus Task</button>
+                </li>
     
         </ul>
         <!-- {{tasks}} -->
@@ -120,9 +134,9 @@
 
     <div v-if="form_input" class="container mb-5">
         <br><br>
-        <div class="input-group mb-2">
-                <span class="input-group-text" id="basic-addon1">Kegiatan</span>
-                <input v-model="kegiatan" type="text" autofocus class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+                <div class="input-group mb-2">
+                  <span class="input-group-text" id="basic-addon1">Kegiatan</span>
+                  <input v-model="kegiatan" type="text" autofocus class="form-control" placeholder="Nama Kegiatan" aria-label="Username" aria-describedby="basic-addon1">
                 </div>
 
                 <div class="input-group mb-2">
@@ -130,12 +144,18 @@
                     <input v-model="deadline" type="date" class="form-control"  aria-label="Username" aria-describedby="basic-addon1">
                 </div>                
                 
-                <div class="input-group">
+                <div class="input-group mb-2">
                     <span class="input-group-text">Uraian Detail</span>
-                    <textarea v-model="detail" class="form-control" aria-label="With textarea"></textarea>
+                    <textarea v-model="detail" class="form-control" aria-label="With textarea" placeholder="Detail Kegiatan"></textarea>
                 </div>
+                <div class="input-group mb-2">
+                  <span class="input-group-text" id="basic-addon1">Nomor HP P I C</span>
+                  <input v-model="pic" type="text" class="form-control" placeholder="Nomor HP PIC" aria-label="" aria-describedby="basic-addon1">
+                </div>
+
                 <div class="text-center mt-2">
-                    <button @click="simpanTask" type="button" class="btn btn-primary">Primary</button>
+                    <button @click="simpanTask" type="button" class="btn btn-primary">Simpan Task</button>
+                    <button @click="form_input = !form_input" type="button" class="btn btn-danger">Close</button>
                 </div>
         <br><br><br><br><br><br>
     </div>
@@ -148,19 +168,55 @@
         <div  v-if="task" >
             <div class="card">
                 <div class="card-header">
-                    <h1>{{task.kegiatan}}</h1>
+                    <h1>
+                      <span>{{task.kegiatan}}</span>
+                      <a v-if="task.pic" target="_blank" class="navbar-brand" :href="pesanWA"><i class="bi bi-whatsapp  display-5"></i></a>
+                    </h1> 
+
                 </div>
                 <div class="card-body">
-                    <h5 v-if="task.deadline" class="card-title text-danger">Deadline : {{task.deadline}}</h5>
-                    <h5><p class="card-text ">{{task.detail}}</p></h5>
-                    <button @click="TaskSelesai(task)" class="btn btn-primary">Task Selesai</button>
-                    <button @click="detailView = false; tasksView = true;" class="btn btn-danger">Cancel</button>
+
+                  <div >
+                    <div  class="container mb-5">
+                      <br><br>
+                      <div class="input-group mb-2">
+                        <b>
+                          <span class="input-group-text" id="basic-addon1">Kegiatan</span>
+                        </b>
+                        <input v-model="task.kegiatan" type="text" autofocus class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+                      </div>
+                      
+                      <div class="input-group mb-2">
+                        <span class="input-group-text" id="basic-addon1">Deadline</span>
+                        <input v-model="task.deadline" type="date" class="form-control"  aria-label="Username" aria-describedby="basic-addon1">
+                      </div>                
+                      
+                      <div class="input-group">
+                        <span class="input-group-text">Uraian Detail</span>
+                        <textarea v-model="task.detail" class="form-control" aria-label="With textarea"></textarea>
+                      </div>
+                      <div class="text-center mt-2">
+                        <button v-if="task.status == 1" @click="updateTask" type="button" class="btn btn-primary">Update Task</button>
+                        <button v-else @click="updateTasknAktifkan" type="button" class="btn btn-primary">Update Task & aktifkan</button>
+                        <button v-if="task.status == 1" @click="TaskSelesai(task)" class="btn btn-warning">Task Selesai</button>
+                        <button @click="detailView = false; tasksView = true;" class="btn btn-danger">Cancel</button>
+                        <button v-if="task.status == 2" @click="hapusTask(task)" class="btn btn-danger">Hapus Task</button>
+                      </div>
+                      <br><br><br><br><br><br>
+                    </div>
+                  </div>
+
+
+
+
+
                 </div>
             </div>
         </div>
     </transition>
 </div>
 
+<br><br><br><br>
 
     <nav class="navbar fixed-bottom navbar-light bg-light">
         <div class="container-fluid container">
@@ -199,18 +255,28 @@
             kegiatan:'',
             deadline:'',
             detail:'',
+            pic:'',
             task:null,
             tasksView:true,
             detailView:false,
             cari:'',
             semua:false,
+            edit1:false,
+            
+
 
         }
     },
 
     computed: {
         TaskAktif: function(){
-            return this.tasks.filter(product => product.status != 2)
+            let aktif = this.tasks.filter(product => product.status != 2)
+            let aktip = aktif.sort(function(a,b){
+              // Turn your strings into dates, and then subtract them
+              // to get a value that is either negative, positive, or zero.
+              return new Date(a.deadline) - new Date(b.deadline) ;
+            });
+            return aktip
         },
         HasilCari: function(){
             return this.TaskAktif.filter((blog) => {
@@ -218,8 +284,17 @@
             }) ||  this.TaskAktif.filter((blog) => {
                 return blog.detail.match(this.cari);
             });
+        },
+        pesanWA(){
 
-            
+          let noWA = this.task.pic;
+          
+            let keg = this.task.kegiatan.replaceAll(' ', '%20');
+            let detailkeg = this.task.detail.replaceAll(' ', '%20');
+          
+          
+
+          return `https://api.whatsapp.com/send?phone=${noWA}&text=*Kegiatan:%20${keg}*%0a%0aDetail:%20${detailkeg}`
         }
     },
     methods:{
@@ -241,8 +316,9 @@
                 var ikegiatan = this.kegiatan.toString();
                 var ideadline = this.deadline.toString();
                 var idetail = this.detail.toString();
+                var ipic = this.pic.toString();
                 var istatus = 1;
-                var lin = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=insert&table=data&data={"id":${waktu1}, "kegiatan":"'${ikegiatan}","deadline":"'${ideadline}","detail":"'${idetail}","status":"${istatus} "}`;
+                var lin = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=insert&table=data&data={"id":${waktu1}, "kegiatan":"'${ikegiatan}","deadline":"'${ideadline}","detail":"'${idetail}","status":"${istatus} ","pic":"62${ipic} ","timeupdate":"-"}`;
                 // this.test = lin;
                 
                 $.ajax({
@@ -293,6 +369,60 @@
 
       },
 
+      updateTask(){
+                // alert('update')
+                // var waktu1 = Date.now();
+                var waktu1 = Date.now();
+                var ikegiatan = this.task.kegiatan.toString();
+                var ideadline = this.task.deadline.toString();
+                var idetail = this.task.detail.toString();
+                var istatus = 1;
+                var itimestamp = this.task.id.toString();
+                var url = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=update&table=data&id=${itimestamp}&data={"kegiatan":"'${ikegiatan}","deadline":"'${ideadline}","detail":"'${idetail}","status":"${istatus}","timeupdate":"${waktu1}"}`
+                // this.test = url;
+                // timestamp=${itimestamp}
+                $.ajax({
+                type: 'GET',
+                url: url,
+                crossDomain: true,
+                dataType: 'jsonp',
+                dataType: "text",
+                success: function(resultData) { 
+                    alert('Task Update Selesai')
+                    app.GetDataTasks();
+                    app.home();
+                }
+                });
+                this.edit1 = false;
+
+      },
+      updateTasknAktifkan(){
+                        // alert('update')
+                // var waktu1 = Date.now();
+                var waktu1 = Date.now();
+                var ikegiatan = this.task.kegiatan.toString();
+                var ideadline = this.task.deadline.toString();
+                var idetail = this.task.detail.toString();
+                var istatus = 1;
+                var itimestamp = this.task.id.toString();
+                var url = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=update&table=data&id=${itimestamp}&data={"kegiatan":"'${ikegiatan}","deadline":"'${ideadline}","detail":"'${idetail}","status":"${istatus}","timeupdate":"${waktu1}","status":1}`
+                // this.test = url;
+                // timestamp=${itimestamp}
+                $.ajax({
+                type: 'GET',
+                url: url,
+                crossDomain: true,
+                dataType: 'jsonp',
+                dataType: "text",
+                success: function(resultData) { 
+                    alert('Task Update Selesai')
+                    app.GetDataTasks();
+                    app.home();
+                }
+                });
+                this.edit1 = false;
+      },
+
               hapusTask(aa){
                 // alert('update')
                 // var waktu1 = Date.now();
@@ -334,9 +464,9 @@
       },
       warna(x){
           if(x == 2){
-              return 'display-1 text-warning'
+              return 'display-5 text-warning'
           }else{
-              return 'display-1 '
+              return 'display-5 '
           }
       }
 
