@@ -266,7 +266,7 @@
             kegiatan:'',
             deadline:'',
             detail:'',
-            pic:'',
+            pic:'62',
             namapic:'',
             task:null,
             tasksView:true,
@@ -332,7 +332,7 @@
                 var ipic = this.pic.toString();
                 var inamapic = this.namapic.toString();
                 var istatus = 1;
-                var lin = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=insert&table=data&data={"id":${waktu1}, "kegiatan":"'${ikegiatan}","deadline":"'${ideadline}","detail":"'${idetail}","status":"${istatus} ","pic":"62${ipic} ","namapic":"'${inamapic}","timeupdate":"-"}`;
+                var lin = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=insert&table=data&data={"id":${waktu1}, "kegiatan":"'${ikegiatan}","deadline":"'${ideadline}","detail":"'${idetail}","status":"${istatus} ","pic":"${ipic} ","namapic":"'${inamapic}","timeupdate":"-"}`;
                 // this.test = lin;
                 this.urll = lin;
                 $.ajax({
