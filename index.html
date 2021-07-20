@@ -98,7 +98,7 @@
                     </form>
                 </div>
     </nav>
-<!-- {{TaskAktif}} -->
+<!-- tes URL {{urll}} -->
 <div v-if="tasksView">
 <transition name="fade">
     <div v-if="!form_input" class="container ">
@@ -149,8 +149,9 @@
                     <textarea v-model="detail" class="form-control" aria-label="With textarea" placeholder="Detail Kegiatan"></textarea>
                 </div>
                 <div class="input-group mb-2">
-                  <span class="input-group-text" id="basic-addon1">Nomor HP P I C</span>
+                  <span class="input-group-text" id="basic-addon1">P I C</span>
                   <input v-model="pic" type="text" class="form-control" placeholder="Nomor HP PIC" aria-label="" aria-describedby="basic-addon1">
+                  <input v-model="namapic" type="text" class="form-control" placeholder="Nama PIC" aria-label="Username">
                 </div>
 
                 <div class="text-center mt-2">
@@ -191,10 +192,20 @@
                         <input v-model="task.deadline" type="date" class="form-control"  aria-label="Username" aria-describedby="basic-addon1">
                       </div>                
                       
-                      <div class="input-group">
+                      <div class="input-group mb-2">
                         <span class="input-group-text">Uraian Detail</span>
                         <textarea v-model="task.detail" class="form-control" aria-label="With textarea"></textarea>
                       </div>
+
+                      <div class="input-group mb-2">
+                        <span class="input-group-text" id="basic-addon1">P I C</span>
+                        <input v-model="task.pic" type="text" class="form-control" placeholder="Nomor HP PIC" aria-label="" aria-describedby="basic-addon1">
+                        <input v-model="task.namapic" type="text" class="form-control" placeholder="Nama PIC" aria-label="Username">
+               
+                      </div>
+
+
+
                       <div class="text-center mt-2">
                         <button v-if="task.status == 1" @click="updateTask" type="button" class="btn btn-primary">Update Task</button>
                         <button v-else @click="updateTasknAktifkan" type="button" class="btn btn-primary">Update Task & aktifkan</button>
@@ -256,12 +267,14 @@
             deadline:'',
             detail:'',
             pic:'',
+            namapic:'',
             task:null,
             tasksView:true,
             detailView:false,
             cari:'',
             semua:false,
             edit1:false,
+            urll :'',
             
 
 
@@ -317,10 +330,11 @@
                 var ideadline = this.deadline.toString();
                 var idetail = this.detail.toString();
                 var ipic = this.pic.toString();
+                var inamapic = this.namapic.toString();
                 var istatus = 1;
-                var lin = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=insert&table=data&data={"id":${waktu1}, "kegiatan":"'${ikegiatan}","deadline":"'${ideadline}","detail":"'${idetail}","status":"${istatus} ","pic":"62${ipic} ","timeupdate":"-"}`;
+                var lin = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=insert&table=data&data={"id":${waktu1}, "kegiatan":"'${ikegiatan}","deadline":"'${ideadline}","detail":"'${idetail}","status":"${istatus} ","pic":"62${ipic} ","namapic":"'${inamapic}","timeupdate":"-"}`;
                 // this.test = lin;
-                
+                this.urll = lin;
                 $.ajax({
                 type: 'GET',
                 url: lin,
@@ -332,6 +346,8 @@
                 app.kegiatan = ''
                 app.deadline = ''
                 app.detail = ''
+                app.pic = ''
+                app.namapic = ''
 
                 app.GetDataTasks();
                 }
@@ -376,9 +392,11 @@
                 var ikegiatan = this.task.kegiatan.toString();
                 var ideadline = this.task.deadline.toString();
                 var idetail = this.task.detail.toString();
+                var ipic = this.task.pic.toString();
+                var inamapic = this.task.namapic.toString();
                 var istatus = 1;
                 var itimestamp = this.task.id.toString();
-                var url = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=update&table=data&id=${itimestamp}&data={"kegiatan":"'${ikegiatan}","deadline":"'${ideadline}","detail":"'${idetail}","status":"${istatus}","timeupdate":"${waktu1}"}`
+                var url = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=update&table=data&id=${itimestamp}&data={"kegiatan":"'${ikegiatan}","deadline":"'${ideadline}","detail":"'${idetail}","pic":"'${ipic}","namapic":"'${inamapic}","status":"${istatus}","timeupdate":"${waktu1}"}`
                 // this.test = url;
                 // timestamp=${itimestamp}
                 $.ajax({
